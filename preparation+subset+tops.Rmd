@@ -1,0 +1,565 @@
+---
+title: "草稿"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+library(VIM)
+```
+```{r}
+library(dplyr) 
+library(tm) 
+library(topicmodels) 
+library(ggplot2) 
+library(RColorBrewer)
+library(wordcloud)
+library(SnowballC)
+library(textstem)
+library(gutenbergr)
+library(LDAvis)
+library(tokenizers)
+library(textstem)
+```
+
+```{r}
+sum(complete.cases(Women_Clothes_Reviews_Dataset_))
+sum(!complete.cases(Women_Clothes_Reviews_Dataset_))
+```
+
+```{r}
+aggr(Women_Clothes_Reviews_Dataset_,numbers=TRUE,prop=FALSE)
+```
+```{r}
+# separate the data
+tops <- subset(Women_Clothes_Reviews_Dataset_, department_name == 'Tops')
+five_stars_tops <- subset(tops, rating %in% '5')
+four_stars_tops <- subset(tops,rating %in% '4')
+three_stars_tops <- subset(tops,rating %in% '3')
+two_stars_tops <- subset(tops,rating %in% '2')
+one_stars_tops <- subset(tops,rating %in% '1')
+```
+```{r}
+# separate the data
+bottoms <- subset(Women_Clothes_Reviews_Dataset_, department_name == 'Bottoms')
+five_stars_bottoms <- subset(bottoms, rating %in% '5')
+four_stars_bottoms <- subset(bottoms,rating %in% '4')
+three_stars_bottoms <- subset(bottoms,rating %in% '3')
+two_stars_bottoms <- subset(bottoms,rating %in% '2')
+one_stars_bottoms <- subset(bottoms,rating %in% '1')
+```
+```{r}
+# separate the data
+dresses <- subset(Women_Clothes_Reviews_Dataset_, department_name == 'Dresses')
+five_stars_dresses <- subset(dresses, rating %in% '5')
+four_stars_dresses <- subset(dresses,rating %in% '4')
+three_stars_dresses <- subset(dresses,rating %in% '3')
+two_stars_dresses <- subset(dresses,rating %in% '2')
+one_stars_dresses <- subset(dresses,rating %in% '1')
+```
+
+```{r}
+# convert text information to utf-8 encoding 
+reviews_5_tops <- stringr::str_conv(five_stars_tops$review_text, "UTF-8")
+reviews_4_tops <- stringr::str_conv(four_stars_tops$review_text, "UTF-8")
+reviews_3_tops <- stringr::str_conv(three_stars_tops$review_text, "UTF-8")
+reviews_2_tops <- stringr::str_conv(two_stars_tops$review_text, "UTF-8")
+reviews_1_tops <- stringr::str_conv(one_stars_tops$review_text, "UTF-8")
+```
+```{r}
+reviews_5_bottoms <- stringr::str_conv(five_stars_bottoms$review_text, "UTF-8")
+reviews_4_bottoms <- stringr::str_conv(four_stars_bottoms$review_text, "UTF-8")
+reviews_3_bottoms <- stringr::str_conv(three_stars_bottoms$review_text, "UTF-8")
+reviews_2_bottoms <- stringr::str_conv(two_stars_bottoms$review_text, "UTF-8")
+reviews_1_bottoms <- stringr::str_conv(one_stars_bottoms$review_text, "UTF-8")
+```
+```{r}
+reviews_5_dresses <- stringr::str_conv(five_stars_dresses$review_text, "UTF-8")
+reviews_4_dresses <- stringr::str_conv(four_stars_dresses$review_text, "UTF-8")
+reviews_3_dresses <- stringr::str_conv(three_stars_dresses$review_text, "UTF-8")
+reviews_2_dresses <- stringr::str_conv(two_stars_dresses$review_text, "UTF-8")
+reviews_1_dresses <- stringr::str_conv(one_stars_dresses$review_text, "UTF-8")
+```
+
+```{r}
+# create corpus
+docs5_tops <- Corpus(VectorSource(reviews_5_tops)) 
+docs4_tops <- Corpus(VectorSource(reviews_4_tops)) 
+docs3_tops <- Corpus(VectorSource(reviews_3_tops)) 
+docs2_tops <- Corpus(VectorSource(reviews_2_tops)) 
+docs1_tops <- Corpus(VectorSource(reviews_1_tops)) 
+```
+```{r}
+docs5_bottoms <- Corpus(VectorSource(reviews_5_bottoms)) 
+docs4_bottoms <- Corpus(VectorSource(reviews_4_bottoms)) 
+docs3_bottoms <- Corpus(VectorSource(reviews_3_bottoms)) 
+docs2_bottoms <- Corpus(VectorSource(reviews_2_bottoms)) 
+docs1_bottoms <- Corpus(VectorSource(reviews_1_bottoms)) 
+```
+```{r}
+docs5_dresses <- Corpus(VectorSource(reviews_5_dresses)) 
+docs4_dresses <- Corpus(VectorSource(reviews_4_dresses)) 
+docs3_dresses <- Corpus(VectorSource(reviews_3_dresses)) 
+docs2_dresses <- Corpus(VectorSource(reviews_2_dresses)) 
+docs1_dresses <- Corpus(VectorSource(reviews_1_dresses)) 
+```
+
+```{r}
+# create a basic term frequency document term matrix
+dtmdocs_5_tops <- DocumentTermMatrix(docs5_tops,
+              control = list(lemma=TRUE,removePunctuation = TRUE,
+              removeNumbers = TRUE, stopwords = TRUE,
+              tolower = TRUE))
+ raw.sum=apply(dtmdocs_5_tops,1,FUN=sum) 
+ dtmdocs_5_tops=dtmdocs_5_tops[raw.sum!=0,]
+```
+```{r}
+dtmdocs_4_tops <- DocumentTermMatrix(docs4_tops,
+              control = list(lemma=TRUE,removePunctuation = TRUE,
+              removeNumbers = TRUE, stopwords = TRUE,
+              tolower = TRUE))
+ raw.sum=apply(dtmdocs_4_tops,1,FUN=sum) 
+ dtmdocs_4_tops=dtmdocs_4_tops[raw.sum!=0,]
+```
+```{r}
+dtmdocs_3_tops <- DocumentTermMatrix(docs3_tops,
+              control = list(lemma=TRUE,removePunctuation = TRUE,
+              removeNumbers = TRUE, stopwords = TRUE,
+              tolower = TRUE))
+ raw.sum=apply(dtmdocs_3_tops,1,FUN=sum) 
+ dtmdocs_3_tops=dtmdocs_3_tops[raw.sum!=0,]
+```
+```{r}
+dtmdocs_2_tops <- DocumentTermMatrix(docs2_tops,
+              control = list(lemma=TRUE,removePunctuation = TRUE,
+              removeNumbers = TRUE, stopwords = TRUE,
+              tolower = TRUE))
+ raw.sum=apply(dtmdocs_2_tops,1,FUN=sum) 
+ dtmdocs_2_tops=dtmdocs_2_tops[raw.sum!=0,]
+```
+```{r}
+dtmdocs_1_tops <- DocumentTermMatrix(docs1_tops,
+              control = list(lemma=TRUE,removePunctuation = TRUE,
+              removeNumbers = TRUE, stopwords = TRUE,
+              tolower = TRUE))
+ raw.sum=apply(dtmdocs_1_tops,1,FUN=sum) 
+ dtmdocs_1_tops=dtmdocs_1_tops[raw.sum!=0,]
+```
+
+```{r}
+dtmdocs_5_bottoms <- DocumentTermMatrix(docs5_bottoms,
+              control = list(lemma=TRUE,removePunctuation = TRUE,
+              removeNumbers = TRUE, stopwords = TRUE,
+              tolower = TRUE))
+ raw.sum=apply(dtmdocs_5_bottoms,1,FUN=sum) 
+ dtmdocs_5_bottoms=dtmdocs_5_bottoms[raw.sum!=0,]
+```
+```{r}
+dtmdocs_4_bottoms <- DocumentTermMatrix(docs4_bottoms,
+              control = list(lemma=TRUE,removePunctuation = TRUE,
+              removeNumbers = TRUE, stopwords = TRUE,
+              tolower = TRUE))
+ raw.sum=apply(dtmdocs_4_bottoms,1,FUN=sum) 
+ dtmdocs_4_bottoms=dtmdocs_4_bottoms[raw.sum!=0,]
+```
+```{r}
+dtmdocs_3_bottoms <- DocumentTermMatrix(docs3_bottoms,
+              control = list(lemma=TRUE,removePunctuation = TRUE,
+              removeNumbers = TRUE, stopwords = TRUE,
+              tolower = TRUE))
+ raw.sum=apply(dtmdocs_3_bottoms,1,FUN=sum) 
+ dtmdocs_3_bottoms=dtmdocs_3_bottoms[raw.sum!=0,]
+```
+```{r}
+dtmdocs_2_bottoms <- DocumentTermMatrix(docs2_bottoms,
+              control = list(lemma=TRUE,removePunctuation = TRUE,
+              removeNumbers = TRUE, stopwords = TRUE,
+              tolower = TRUE))
+ raw.sum=apply(dtmdocs_2_bottoms,1,FUN=sum) 
+ dtmdocs_2_bottoms=dtmdocs_2_bottoms[raw.sum!=0,]
+```
+```{r}
+dtmdocs_1_bottoms <- DocumentTermMatrix(docs1_bottoms,
+              control = list(lemma=TRUE,removePunctuation = TRUE,
+              removeNumbers = TRUE, stopwords = TRUE,
+              tolower = TRUE))
+ raw.sum=apply(dtmdocs_1_bottoms,1,FUN=sum) 
+ dtmdocs_1_bottoms=dtmdocs_1_bottoms[raw.sum!=0,]
+```
+
+```{r}
+dtmdocs_5_dresses <- DocumentTermMatrix(docs5_dresses,
+              control = list(lemma=TRUE,removePunctuation = TRUE,
+              removeNumbers = TRUE, stopwords = TRUE,
+              tolower = TRUE))
+ raw.sum=apply(dtmdocs_5_dresses,1,FUN=sum) 
+ dtmdocs_5_dresses=dtmdocs_5_dresses[raw.sum!=0,]
+```
+```{r}
+dtmdocs_4_dresses <- DocumentTermMatrix(docs4_dresses,
+              control = list(lemma=TRUE,removePunctuation = TRUE,
+              removeNumbers = TRUE, stopwords = TRUE,
+              tolower = TRUE))
+ raw.sum=apply(dtmdocs_4_dresses,1,FUN=sum) 
+ dtmdocs_4_dresses=dtmdocs_4_dresses[raw.sum!=0,]
+```
+```{r}
+dtmdocs_3_dresses <- DocumentTermMatrix(docs3_dresses,
+              control = list(lemma=TRUE,removePunctuation = TRUE,
+              removeNumbers = TRUE, stopwords = TRUE,
+              tolower = TRUE))
+ raw.sum=apply(dtmdocs_3_dresses,1,FUN=sum) 
+ dtmdocs_3_dresses=dtmdocs_3_dresses[raw.sum!=0,]
+```
+```{r}
+dtmdocs_2_dresses <- DocumentTermMatrix(docs2_dresses,
+              control = list(lemma=TRUE,removePunctuation = TRUE,
+              removeNumbers = TRUE, stopwords = TRUE,
+              tolower = TRUE))
+ raw.sum=apply(dtmdocs_2_dresses,1,FUN=sum) 
+ dtmdocs_2_dresses=dtmdocs_2_dresses[raw.sum!=0,]
+```
+```{r}
+dtmdocs_1_dresses <- DocumentTermMatrix(docs1_dresses,
+              control = list(lemma=TRUE,removePunctuation = TRUE,
+              removeNumbers = TRUE, stopwords = TRUE,
+              tolower = TRUE))
+ raw.sum=apply(dtmdocs_1_dresses,1,FUN=sum) 
+ dtmdocs_1_dresses=dtmdocs_1_dresses[raw.sum!=0,]
+```
+
+```{r}
+# create a frequency table
+dtm.new_5_tops <- as.matrix(dtmdocs_5_tops)
+frequency_5_tops <- colSums(dtm.new_5_tops)
+frequency_5_tops <- sort(frequency_5_tops, decreasing=TRUE) 
+doc_length_5_tops <- rowSums(dtm.new_5_tops)
+frequency_5_tops[1:10] #Example of the output
+```
+```{r}
+words_5_tops <- names(frequency_5_tops)# get back the word
+wordcloud(words_5_tops[1:100], frequency_5_tops[1:100], rot.per=0.15, random.order = FALSE, scale=c(4,0.5),
+random.color = FALSE, colors=brewer.pal(8,"Dark2"))
+```
+
+
+```{r}
+findAssocs(dtmdocs_5_tops, 'love', corlimit = 0.2)
+```
+```{r}
+findAssocs(dtmdocs_5_tops, 'great', corlimit = 0.2)
+```
+```{r}
+# create a frequency table
+dtm.new_4_tops <- as.matrix(dtmdocs_4_tops)
+frequency_4_tops <- colSums(dtm.new_4_tops)
+frequency_4_tops <- sort(frequency_4_tops, decreasing=TRUE) 
+doc_length_4_tops <- rowSums(dtm.new_4_tops)
+frequency_4_tops[1:10] #Example of the output
+```
+```{r}
+words_4_tops <- names(frequency_4_tops)# get back the word
+wordcloud(words_4_tops[1:100], frequency_4_tops[1:100], rot.per=0.15, random.order = FALSE, scale=c(4,0.5),
+random.color = FALSE, colors=brewer.pal(8,"Dark2"))
+```
+```{r}
+# create a frequency table
+dtm.new_3_tops <- as.matrix(dtmdocs_3_tops)
+frequency_3_tops <- colSums(dtm.new_3_tops)
+frequency_3_tops <- sort(frequency_3_tops, decreasing=TRUE) 
+doc_length_3_tops <- rowSums(dtm.new_3_tops)
+frequency_3_tops[1:10] #Example of the output
+```
+```{r}
+words_3_tops <- names(frequency_3_tops)# get back the word
+wordcloud(words_3_tops[1:100], frequency_3_tops[1:100], rot.per=0.15, random.order = FALSE, scale=c(4,0.5),
+random.color = FALSE, colors=brewer.pal(8,"Dark2"))
+```
+```{r}
+# create a frequency table
+dtm.new_2_tops <- as.matrix(dtmdocs_2_tops)
+frequency_2_tops <- colSums(dtm.new_2_tops)
+frequency_2_tops <- sort(frequency_2_tops, decreasing=TRUE) 
+doc_length_2_tops <- rowSums(dtm.new_2_tops)
+frequency_2_tops[1:10] #Example of the output
+```
+```{r}
+words_2_tops <- names(frequency_2_tops)# get back the word
+wordcloud(words_2_tops[1:100], frequency_2_tops[1:100], rot.per=0.15, random.order = FALSE, scale=c(4,0.5),
+random.color = FALSE, colors=brewer.pal(8,"Dark2"))
+```
+```{r}
+# create a frequency table
+dtm.new_1_tops <- as.matrix(dtmdocs_1_tops)
+frequency_1_tops <- colSums(dtm.new_1_tops)
+frequency_1_tops <- sort(frequency_1_tops, decreasing=TRUE) 
+doc_length_1_tops <- rowSums(dtm.new_1_tops)
+frequency_1_tops[1:10] #Example of the output
+```
+```{r}
+words_1_tops <- names(frequency_1_tops)# get back the word
+wordcloud(words_1_tops[1:100], frequency_1_tops[1:100], rot.per=0.15, random.order = FALSE, scale=c(4,0.5),
+random.color = FALSE, colors=brewer.pal(8,"Dark2"))
+```
+
+```{r}
+# determin number of topics
+iter_5_tops <- 2000 
+coherence_5_tops <- c()
+
+for (i in (5:20)){
+  ldaOut5_tops <-LDA(dtmdocs_5_tops,i, method="Gibbs",
+               control=list(iter=iter_5_tops,seed=1000))
+  phi5_tops <- posterior(ldaOut5_tops)$terms %>% as.matrix
+  theta5_tops <- posterior(ldaOut5_tops)$topics %>% as.matrix 
+  coherence_one_5_tops <- mean(textmineR::CalcProbCoherence(phi = phi5_tops,dtm = dtm.new_5_tops))    
+  coherence5_tops<-append(coherence_5_tops,coherence_one_5_tops)
+}
+
+k_5_tops <- c(5:20)[which.max(coherence5_tops)] 
+print(k_5_tops)
+```
+
+```{r}
+# determin number of topics
+iter_4_tops <- 2000 
+coherence_4_tops <- c()
+
+for (i in (5:20)){
+  ldaOut4_tops <-LDA(dtmdocs_4_tops,i, method="Gibbs",
+               control=list(iter=iter_4_tops,seed=1000))
+  phi4_tops <- posterior(ldaOut4_tops)$terms %>% as.matrix
+  theta4_tops <- posterior(ldaOut4_tops)$topics %>% as.matrix 
+  coherence_one_4_tops <- mean(textmineR::CalcProbCoherence(phi = phi4_tops,dtm = dtm.new_4_tops))    
+  coherence4_tops<-append(coherence_4_tops,coherence_one_4_tops)
+}
+
+k_4_tops <- c(5:20)[which.max(coherence4_tops)] 
+print(k_4_tops)
+```
+```{r}
+# determin number of topics
+iter_3_tops <- 2000 
+coherence_3_tops <- c()
+
+for (i in (5:20)){
+  ldaOut3_tops <-LDA(dtmdocs_3_tops,i, method="Gibbs",
+               control=list(iter=iter_3_tops,seed=1000))
+  phi3_tops <- posterior(ldaOut3_tops)$terms %>% as.matrix
+  theta3_tops <- posterior(ldaOut3_tops)$topics %>% as.matrix 
+  coherence_one_3_tops <- mean(textmineR::CalcProbCoherence(phi = phi3_tops,dtm = dtm.new_3_tops))    
+  coherence3_tops<-append(coherence_3_tops,coherence_one_3_tops)
+}
+
+k_3_tops <- c(5:20)[which.max(coherence3_tops)] 
+print(k_3_tops)
+```
+```{r}
+# determin number of topics
+iter_2_tops <- 2000 
+coherence_2_tops <- c()
+
+for (i in (5:20)){
+  ldaOut2_tops <-LDA(dtmdocs_2_tops,i, method="Gibbs",
+               control=list(iter=iter_2_tops,seed=1000))
+  phi2_tops <- posterior(ldaOut2_tops)$terms %>% as.matrix
+  theta2_tops <- posterior(ldaOut2_tops)$topics %>% as.matrix 
+  coherence_one_2_tops <- mean(textmineR::CalcProbCoherence(phi = phi2_tops,dtm = dtm.new_2_tops))    
+  coherence2_tops<-append(coherence_2_tops,coherence_one_2_tops)
+}
+
+k_2_tops <- c(5:20)[which.max(coherence2_tops)] 
+print(k_2_tops)
+```
+```{r}
+# determin number of topics
+iter_1_tops <- 2000 
+coherence_1_tops <- c()
+
+for (i in (5:20)){
+  ldaOut1_tops <-LDA(dtmdocs_1_tops,i, method="Gibbs",
+               control=list(iter=iter_1_tops,seed=1000))
+  phi1_tops <- posterior(ldaOut1_tops)$terms %>% as.matrix
+  theta1_tops <- posterior(ldaOut1_tops)$topics %>% as.matrix 
+  coherence_one_1_tops <- mean(textmineR::CalcProbCoherence(phi = phi1_tops,dtm = dtm.new_1_tops))    
+  coherence1_tops<-append(coherence_1_tops,coherence_one_1_tops)
+}
+
+k_1_tops <- c(5:20)[which.max(coherence1_tops)] 
+print(k_1_tops)
+```
+```{r}
+# topic Modelling: Latent Dirichlet Allocation
+ldaOut5_tops <-LDA(dtmdocs_5_tops,k_5_tops, method="Gibbs", control=list(iter=iter_5_tops,seed=1000))
+phi5_tops <- posterior(ldaOut5_tops)$terms %>% as.matrix
+#matrix, with each row containing the distribution over terms for a topic,
+theta5_tops <- posterior(ldaOut5_tops)$topics %>% as.matrix
+#matrix, with each row containing the probability distribution over topics for a document,
+```
+
+```{r}
+# Which highest alpha 'term' is part of which topics
+ldaOut.terms_5_tops <- as.matrix(terms(ldaOut5_tops, 10))
+```
+
+```{r}
+# Which 'topic' is the review in (highest probability)
+ldaOut.topics_5_tops <- data.frame(topics(ldaOut5_tops))
+ldaOut.topics_5_tops$index <- as.numeric(row.names(ldaOut.topics_5_tops)) 
+five_stars_tops$index <- as.numeric(row.names(five_stars_tops))
+datawithtopic5_tops <- merge(five_stars_tops, ldaOut.topics_5_tops, by='index',all.x=TRUE)
+datawithtopic5_tops <- datawithtopic5_tops[order(datawithtopic5_tops$index), ]
+```
+
+```{r}
+datawithtopic5_tops[0:10,]
+```
+```{r}
+vocab_5_tops <- colnames(phi5_tops) #vocab list in DTM
+# create the JSON object to feed the visualization in LDAvis:
+json_lda_5_tops <- createJSON(phi = phi5_tops, theta = theta5_tops,
+vocab = vocab_5_tops, doc.length = doc_length_5_tops,
+                       term.frequency = frequency_5_tops)
+serVis(json_lda_5_tops, out.dir = 'vis', open.browser = TRUE)
+```
+```{r}
+# topic Modelling: Latent Dirichlet Allocation
+ldaOut4_tops <-LDA(dtmdocs_4_tops,k_4_tops, method="Gibbs", control=list(iter=iter_4_tops,seed=1000))
+phi4_tops <- posterior(ldaOut4_tops)$terms %>% as.matrix
+#matrix, with each row containing the distribution over terms for a topic,
+theta4_tops <- posterior(ldaOut4_tops)$topics %>% as.matrix
+#matrix, with each row containing the probability distribution over topics for a document,
+```
+
+```{r}
+# Which highest alpha 'term' is part of which topics
+ldaOut.terms_4_tops <- as.matrix(terms(ldaOut4_tops, 10))
+```
+
+```{r}
+# Which 'topic' is the review in (highest probability)
+ldaOut.topics_4_tops <- data.frame(topics(ldaOut4_tops))
+ldaOut.topics_4_tops$index <- as.numeric(row.names(ldaOut.topics_4_tops)) 
+four_stars_tops$index <- as.numeric(row.names(four_stars_tops))
+datawithtopic4_tops <- merge(four_stars_tops, ldaOut.topics_4_tops, by='index',all.x=TRUE)
+datawithtopic4_tops <- datawithtopic4_tops[order(datawithtopic4_tops$index), ]
+```
+
+```{r}
+datawithtopic4_tops[0:10,]
+```
+
+```{r}
+vocab_4_tops <- colnames(phi4_tops) #vocab list in DTM
+# create the JSON object to feed the visualization in LDAvis:
+json_lda_4_tops <- createJSON(phi = phi4_tops, theta = theta4_tops,
+vocab = vocab_4_tops, doc.length = doc_length_4_tops,
+                       term.frequency = frequency_4_tops)
+serVis(json_lda_4_tops, out.dir = 'vis', open.browser = TRUE)
+```
+
+```{r}
+# topic Modelling: Latent Dirichlet Allocation
+ldaOut3_tops <-LDA(dtmdocs_3_tops,k_3_tops, method="Gibbs", control=list(iter=iter_3_tops,seed=1000))
+phi3_tops <- posterior(ldaOut3_tops)$terms %>% as.matrix
+#matrix, with each row containing the distribution over terms for a topic,
+theta3_tops <- posterior(ldaOut3_tops)$topics %>% as.matrix
+#matrix, with each row containing the probability distribution over topics for a document,
+```
+
+```{r}
+# Which highest alpha 'term' is part of which topics
+ldaOut.terms_3_tops <- as.matrix(terms(ldaOut3_tops, 10))
+```
+
+```{r}
+# Which 'topic' is the review in (highest probability)
+ldaOut.topics_3_tops <- data.frame(topics(ldaOut3_tops))
+ldaOut.topics_3_tops$index <- as.numeric(row.names(ldaOut.topics_3_tops)) 
+three_stars_tops$index <- as.numeric(row.names(three_stars_tops))
+datawithtopic3_tops <- merge(three_stars_tops, ldaOut.topics_3_tops, by='index',all.x=TRUE)
+datawithtopic3_tops <- datawithtopic3_tops[order(datawithtopic3_tops$index), ]
+```
+
+```{r}
+datawithtopic3_tops[0:10,]
+```
+
+```{r}
+vocab_3_tops <- colnames(phi3_tops) #vocab list in DTM
+# create the JSON object to feed the visualization in LDAvis:
+json_lda_3_tops <- createJSON(phi = phi3_tops, theta = theta3_tops,
+vocab = vocab_3_tops, doc.length = doc_length_3_tops,
+                       term.frequency = frequency_3_tops)
+serVis(json_lda_3_tops, out.dir = 'vis', open.browser = TRUE)
+```
+
+```{r}
+# topic Modelling: Latent Dirichlet Allocation
+ldaOut2_tops <-LDA(dtmdocs_2_tops,k_2_tops, method="Gibbs", control=list(iter=iter_2_tops,seed=1000))
+phi2_tops <- posterior(ldaOut2_tops)$terms %>% as.matrix
+#matrix, with each row containing the distribution over terms for a topic,
+theta2_tops <- posterior(ldaOut2_tops)$topics %>% as.matrix
+#matrix, with each row containing the probability distribution over topics for a document,
+```
+
+```{r}
+# Which highest alpha 'term' is part of which topics
+ldaOut.terms_2_tops <- as.matrix(terms(ldaOut2_tops, 10))
+```
+
+```{r}
+# Which 'topic' is the review in (highest probability)
+ldaOut.topics_2_tops <- data.frame(topics(ldaOut2_tops))
+ldaOut.topics_2_tops$index <- as.numeric(row.names(ldaOut.topics_2_tops)) 
+two_stars_tops$index <- as.numeric(row.names(two_stars_tops))
+datawithtopic2_tops <- merge(two_stars_tops, ldaOut.topics_2_tops, by='index',all.x=TRUE)
+datawithtopic2_tops <- datawithtopic2_tops[order(datawithtopic2_tops$index), ]
+```
+
+```{r}
+datawithtopic2_tops[0:10,]
+```
+
+```{r}
+vocab_2_tops <- colnames(phi2_tops) #vocab list in DTM
+# create the JSON object to feed the visualization in LDAvis:
+json_lda_2_tops <- createJSON(phi = phi2_tops, theta = theta2_tops,
+vocab = vocab_2_tops, doc.length = doc_length_2_tops,
+                       term.frequency = frequency_2_tops)
+serVis(json_lda_2_tops, out.dir = 'vis', open.browser = TRUE)
+```
+
+```{r}
+# topic Modelling: Latent Dirichlet Allocation
+ldaOut1_tops <-LDA(dtmdocs_1_tops,k_1_tops, method="Gibbs", control=list(iter=iter_1_tops,seed=1000))
+phi1_tops <- posterior(ldaOut1_tops)$terms %>% as.matrix
+#matrix, with each row containing the distribution over terms for a topic,
+theta1_tops <- posterior(ldaOut1_tops)$topics %>% as.matrix
+#matrix, with each row containing the probability distribution over topics for a document,
+```
+
+```{r}
+# Which highest alpha 'term' is part of which topics
+ldaOut.terms_1_tops <- as.matrix(terms(ldaOut1_tops, 10))
+```
+
+```{r}
+# Which 'topic' is the review in (highest probability)
+ldaOut.topics_1_tops <- data.frame(topics(ldaOut1_tops))
+ldaOut.topics_1_tops$index <- as.numeric(row.names(ldaOut.topics_1_tops)) 
+one_stars_tops$index <- as.numeric(row.names(one_stars_tops))
+datawithtopic1_tops <- merge(one_stars_tops, ldaOut.topics_1_tops, by='index',all.x=TRUE)
+datawithtopic1_tops <- datawithtopic1_tops[order(datawithtopic1_tops$index), ]
+```
+
+```{r}
+datawithtopic1_tops[0:10,]
+```
+
+```{r}
+
+```
+

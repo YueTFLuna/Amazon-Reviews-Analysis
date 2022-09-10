@@ -1,0 +1,322 @@
+---
+title: "bottoms"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# create a frequency table
+dtm.new_5_bottoms <- as.matrix(dtmdocs_5_bottoms)
+frequency_5_bottoms <- colSums(dtm.new_5_bottoms)
+frequency_5_bottoms <- sort(frequency_5_bottoms, decreasing=TRUE) 
+doc_length_5_bottoms <- rowSums(dtm.new_5_bottoms)
+frequency_5_bottoms[1:10] #Example of the output
+```
+
+```{r}
+words_5_bottoms <- names(frequency_5_bottoms)# get back the word
+wordcloud(words_5_bottoms[1:100], frequency_5_bottoms[1:100], rot.per=0.15, random.order = FALSE, scale=c(4,0.5),
+random.color = FALSE, colors=brewer.pal(8,"Dark2"))
+```
+
+```{r}
+# create a frequency table
+dtm.new_4_bottoms <- as.matrix(dtmdocs_4_bottoms)
+frequency_4_bottoms <- colSums(dtm.new_4_bottoms)
+frequency_4_bottoms <- sort(frequency_4_bottoms, decreasing=TRUE) 
+doc_length_4_bottoms <- rowSums(dtm.new_4_bottoms)
+frequency_4_bottoms[1:10] #Example of the output
+```
+
+```{r}
+words_4_bottoms <- names(frequency_4_bottoms)# get back the word
+wordcloud(words_4_bottoms[1:100], frequency_4_bottoms[1:100], rot.per=0.15, random.order = FALSE, scale=c(4,0.5),
+random.color = FALSE, colors=brewer.pal(8,"Dark2"))
+```
+
+```{r}
+# create a frequency table
+dtm.new_3_bottoms <- as.matrix(dtmdocs_3_bottoms)
+frequency_3_bottoms <- colSums(dtm.new_3_bottoms)
+frequency_3_bottoms <- sort(frequency_3_bottoms, decreasing=TRUE) 
+doc_length_3_bottoms <- rowSums(dtm.new_3_bottoms)
+frequency_3_bottoms[1:10] #Example of the output
+```
+
+```{r}
+words_3_bottoms <- names(frequency_3_bottoms)# get back the word
+wordcloud(words_3_bottoms[1:100], frequency_3_bottoms[1:100], rot.per=0.15, random.order = FALSE, scale=c(4,0.5),
+random.color = FALSE, colors=brewer.pal(8,"Dark2"))
+```
+
+```{r}
+# create a frequency table
+dtm.new_2_bottoms <- as.matrix(dtmdocs_2_bottoms)
+frequency_2_bottoms <- colSums(dtm.new_2_bottoms)
+frequency_2_bottoms <- sort(frequency_2_bottoms, decreasing=TRUE) 
+doc_length_2_bottoms <- rowSums(dtm.new_2_bottoms)
+frequency_2_bottoms[1:10] #Example of the output
+```
+
+```{r}
+words_2_bottoms <- names(frequency_2_bottoms)# get back the word
+wordcloud(words_2_bottoms[1:100], frequency_2_bottoms[1:100], rot.per=0.15, random.order = FALSE, scale=c(4,0.5),
+random.color = FALSE, colors=brewer.pal(8,"Dark2"))
+```
+
+```{r}
+# create a frequency table
+dtm.new_1_bottoms <- as.matrix(dtmdocs_1_bottoms)
+frequency_1_bottoms <- colSums(dtm.new_1_bottoms)
+frequency_1_bottoms <- sort(frequency_1_bottoms, decreasing=TRUE) 
+doc_length_1_bottoms <- rowSums(dtm.new_1_bottoms)
+frequency_1_bottoms[1:10] #Example of the output
+```
+
+```{r}
+words_1_bottoms <- names(frequency_1_bottoms)# get back the word
+wordcloud(words_1_bottoms[1:100], frequency_1_bottoms[1:100], rot.per=0.15, random.order = FALSE, scale=c(4,0.5),
+random.color = FALSE, colors=brewer.pal(8,"Dark2"))
+```
+
+```{r}
+# determin number of topics
+iter_5_bottoms <- 2000 
+coherence_5_bottoms <- c()
+
+for (i in (5:20)){
+  ldaOut5_bottoms <-LDA(dtmdocs_5_bottoms,i, method="Gibbs",
+               control=list(iter=iter_5_bottoms,seed=1000))
+  phi5_bottoms <- posterior(ldaOut5_bottoms)$terms %>% as.matrix
+  theta5_bottoms <- posterior(ldaOut5_bottoms)$topics %>% as.matrix 
+  coherence_one_5_bottoms <- mean(textmineR::CalcProbCoherence(phi = phi5_bottoms,dtm = dtm.new_5_bottoms))    
+  coherence5_bottoms<-append(coherence_5_bottoms,coherence_one_5_bottoms)
+}
+
+k_5_bottoms <- c(5:20)[which.max(coherence5_bottoms)] 
+print(k_5_bottoms)
+```
+
+```{r}
+# determin number of topics
+iter_4_bottoms <- 2000 
+coherence_4_bottoms <- c()
+
+for (i in (5:20)){
+  ldaOut4_bottoms <-LDA(dtmdocs_4_bottoms,i, method="Gibbs",
+               control=list(iter=iter_4_bottoms,seed=1000))
+  phi4_bottoms <- posterior(ldaOut4_bottoms)$terms %>% as.matrix
+  theta4_bottoms <- posterior(ldaOut4_bottoms)$topics %>% as.matrix 
+  coherence_one_4_bottoms <- mean(textmineR::CalcProbCoherence(phi = phi4_bottoms,dtm = dtm.new_4_bottoms))    
+  coherence4_bottoms<-append(coherence_4_bottoms,coherence_one_4_bottoms)
+}
+
+k_4_bottoms <- c(5:20)[which.max(coherence4_bottoms)] 
+print(k_4_bottoms)
+```
+
+```{r}
+# determin number of topics
+iter_3_bottoms <- 2000 
+coherence_3_bottoms <- c()
+
+for (i in (5:20)){
+  ldaOut3_bottoms <-LDA(dtmdocs_3_bottoms,i, method="Gibbs",
+               control=list(iter=iter_3_bottoms,seed=1000))
+  phi3_bottoms <- posterior(ldaOut3_bottoms)$terms %>% as.matrix
+  theta3_bottoms <- posterior(ldaOut3_bottoms)$topics %>% as.matrix 
+  coherence_one_3_bottoms <- mean(textmineR::CalcProbCoherence(phi = phi3_bottoms,dtm = dtm.new_3_bottoms))    
+  coherence3_bottoms<-append(coherence_3_bottoms,coherence_one_3_bottoms)
+}
+
+k_3_bottoms <- c(5:20)[which.max(coherence3_bottoms)] 
+print(k_3_bottoms)
+```
+
+```{r}
+# determin number of topics
+iter_2_bottoms <- 2000 
+coherence_2_bottoms <- c()
+
+for (i in (5:20)){
+  ldaOut2_bottoms <-LDA(dtmdocs_2_bottoms,i, method="Gibbs",
+               control=list(iter=iter_2_bottoms,seed=1000))
+  phi2_bottoms <- posterior(ldaOut2_bottoms)$terms %>% as.matrix
+  theta2_bottoms <- posterior(ldaOut2_bottoms)$topics %>% as.matrix 
+  coherence_one_2_bottoms <- mean(textmineR::CalcProbCoherence(phi = phi2_bottoms,dtm = dtm.new_2_bottoms))    
+  coherence2_bottoms<-append(coherence_2_bottoms,coherence_one_2_bottoms)
+}
+
+k_2_bottoms <- c(5:20)[which.max(coherence2_bottoms)] 
+print(k_2_bottoms)
+```
+
+```{r}
+# determin number of topics
+iter_1_bottoms <- 2000 
+coherence_1_bottoms <- c()
+
+for (i in (5:20)){
+  ldaOut1_bottoms <-LDA(dtmdocs_1_bottoms,i, method="Gibbs",
+               control=list(iter=iter_1_bottoms,seed=1000))
+  phi1_bottoms <- posterior(ldaOut1_bottoms)$terms %>% as.matrix
+  theta1_bottoms <- posterior(ldaOut1_bottoms)$topics %>% as.matrix 
+  coherence_one_1_bottoms <- mean(textmineR::CalcProbCoherence(phi = phi1_bottoms,dtm = dtm.new_1_bottoms))    
+  coherence1_bottoms<-append(coherence_1_bottoms,coherence_one_1_bottoms)
+}
+
+k_1_bottoms <- c(5:20)[which.max(coherence1_bottoms)] 
+print(k_1_bottoms)
+```
+
+```{r}
+# topic Modelling: Latent Dirichlet Allocation
+ldaOut5_bottoms <-LDA(dtmdocs_5_bottoms,k_5_bottoms, method="Gibbs", control=list(iter=iter_5_bottoms,seed=1000))
+phi5_bottoms <- posterior(ldaOut5_bottoms)$terms %>% as.matrix
+#matrix, with each row containing the distribution over terms for a topic,
+theta5_bottoms <- posterior(ldaOut5_bottoms)$topics %>% as.matrix
+#matrix, with each row containing the probability distribution over topics for a document,
+```
+
+```{r}
+# Which highest alpha 'term' is part of which topics
+ldaOut.terms_5_bottoms <- as.matrix(terms(ldaOut5_bottoms, 10))
+```
+
+```{r}
+# Which 'topic' is the review in (highest probability)
+ldaOut.topics_5_bottoms <- data.frame(topics(ldaOut5_bottoms))
+ldaOut.topics_5_bottoms$index <- as.numeric(row.names(ldaOut.topics_5_bottoms)) 
+five_stars_bottoms$index <- as.numeric(row.names(five_stars_bottoms))
+datawithtopic5_bottoms <- merge(five_stars_bottoms, ldaOut.topics_5_bottoms, by='index',all.x=TRUE)
+datawithtopic5_bottoms <- datawithtopic5_bottoms[order(datawithtopic5_bottoms$index), ]
+```
+
+```{r}
+datawithtopic5_bottoms[0:10,]
+```
+
+```{r}
+# topic Modelling: Latent Dirichlet Allocation
+ldaOut4_bottoms <-LDA(dtmdocs_4_bottoms,k_4_bottoms, method="Gibbs", control=list(iter=iter_4_bottoms,seed=1000))
+phi4_bottoms <- posterior(ldaOut4_bottoms)$terms %>% as.matrix
+#matrix, with each row containing the distribution over terms for a topic,
+theta4_bottoms <- posterior(ldaOut4_bottoms)$topics %>% as.matrix
+#matrix, with each row containing the probability distribution over topics for a document,
+```
+
+```{r}
+# Which highest alpha 'term' is part of which topics
+ldaOut.terms_4_bottoms <- as.matrix(terms(ldaOut4_bottoms, 10))
+```
+
+```{r}
+# Which 'topic' is the review in (highest probability)
+ldaOut.topics_4_bottoms <- data.frame(topics(ldaOut4_bottoms))
+ldaOut.topics_4_bottoms$index <- as.numeric(row.names(ldaOut.topics_4_bottoms)) 
+four_stars_bottoms$index <- as.numeric(row.names(four_stars_bottoms))
+datawithtopic4_bottoms <- merge(four_stars_bottoms, ldaOut.topics_4_bottoms, by='index',all.x=TRUE)
+datawithtopic4_bottoms <- datawithtopic4_bottoms[order(datawithtopic4_bottoms$index), ]
+```
+
+```{r}
+datawithtopic4_bottoms[0:10,]
+```
+
+```{r}
+# topic Modelling: Latent Dirichlet Allocation
+ldaOut3_bottoms <-LDA(dtmdocs_3_bottoms,k_3_bottoms, method="Gibbs", control=list(iter=iter_3_bottoms,seed=1000))
+phi3_bottoms <- posterior(ldaOut3_bottoms)$terms %>% as.matrix
+#matrix, with each row containing the distribution over terms for a topic,
+theta3_bottoms <- posterior(ldaOut3_bottoms)$topics %>% as.matrix
+#matrix, with each row containing the probability distribution over topics for a document,
+```
+
+```{r}
+# Which highest alpha 'term' is part of which topics
+ldaOut.terms_3_bottoms <- as.matrix(terms(ldaOut3_bottoms, 10))
+```
+
+```{r}
+# Which 'topic' is the review in (highest probability)
+ldaOut.topics_3_bottoms <- data.frame(topics(ldaOut3_bottoms))
+ldaOut.topics_3_bottoms$index <- as.numeric(row.names(ldaOut.topics_3_bottoms)) 
+three_stars_bottoms$index <- as.numeric(row.names(three_stars_bottoms))
+datawithtopic3_bottoms <- merge(three_stars_bottoms, ldaOut.topics_3_bottoms, by='index',all.x=TRUE)
+datawithtopic3_bottoms <- datawithtopic3_bottoms[order(datawithtopic3_bottoms$index), ]
+```
+
+```{r}
+datawithtopic3_bottoms[0:10,]
+```
+
+```{r}
+# topic Modelling: Latent Dirichlet Allocation
+ldaOut2_bottoms <-LDA(dtmdocs_2_bottoms,k_2_bottoms, method="Gibbs", control=list(iter=iter_2_bottoms,seed=1000))
+phi2_bottoms <- posterior(ldaOut2_bottoms)$terms %>% as.matrix
+#matrix, with each row containing the distribution over terms for a topic,
+theta2_bottoms <- posterior(ldaOut2_bottoms)$topics %>% as.matrix
+#matrix, with each row containing the probability distribution over topics for a document,
+```
+
+```{r}
+# Which highest alpha 'term' is part of which topics
+ldaOut.terms_2_bottoms <- as.matrix(terms(ldaOut2_bottoms, 10))
+```
+
+```{r}
+# Which 'topic' is the review in (highest probability)
+ldaOut.topics_2_bottoms <- data.frame(topics(ldaOut2_bottoms))
+ldaOut.topics_2_bottoms$index <- as.numeric(row.names(ldaOut.topics_2_bottoms)) 
+two_stars_bottoms$index <- as.numeric(row.names(two_stars_bottoms))
+datawithtopic2_bottoms <- merge(two_stars_bottoms, ldaOut.topics_2_bottoms, by='index',all.x=TRUE)
+datawithtopic2_bottoms <- datawithtopic2_bottoms[order(datawithtopic2_bottoms$index), ]
+```
+
+```{r}
+datawithtopic2_bottoms[0:10,]
+```
+
+```{r}
+vocab_2_bottoms <- colnames(phi2_bottoms) #vocab list in DTM
+# create the JSON object to feed the visualization in LDAvis:
+json_lda_2_bottoms <- createJSON(phi = phi2_bottoms, theta = theta2_bottoms,
+vocab = vocab_2_bottoms, doc.length = doc_length_2_bottoms,
+                       term.frequency = frequency_2_bottoms)
+serVis(json_lda_2_bottoms, out.dir = 'vis', open.browser = TRUE)
+```
+
+```{r}
+# topic Modelling: Latent Dirichlet Allocation
+ldaOut1_bottoms <-LDA(dtmdocs_1_bottoms,k_1_bottoms, method="Gibbs", control=list(iter=iter_1_bottoms,seed=1000))
+phi1_bottoms <- posterior(ldaOut1_bottoms)$terms %>% as.matrix
+#matrix, with each row containing the distribution over terms for a topic,
+theta1_bottoms <- posterior(ldaOut1_bottoms)$topics %>% as.matrix
+#matrix, with each row containing the probability distribution over topics for a document,
+```
+
+```{r}
+# Which highest alpha 'term' is part of which topics
+ldaOut.terms_1_bottoms <- as.matrix(terms(ldaOut1_bottoms, 10))
+```
+
+```{r}
+# Which 'topic' is the review in (highest probability)
+ldaOut.topics_1_bottoms <- data.frame(topics(ldaOut1_bottoms))
+ldaOut.topics_1_bottoms$index <- as.numeric(row.names(ldaOut.topics_1_bottoms)) 
+one_stars_bottoms$index <- as.numeric(row.names(one_stars_bottoms))
+datawithtopic1_bottoms <- merge(one_stars_bottoms, ldaOut.topics_1_bottoms, by='index',all.x=TRUE)
+datawithtopic1_bottoms <- datawithtopic1_bottoms[order(datawithtopic1_bottoms$index), ]
+```
+
+```{r}
+datawithtopic1_bottoms[0:10,]
+```
+
+```{r}
+
+```
+

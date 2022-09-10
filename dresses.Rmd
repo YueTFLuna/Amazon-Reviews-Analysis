@@ -1,0 +1,309 @@
+---
+title: "dresses"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# create a frequency table
+dtm.new_5_dresses <- as.matrix(dtmdocs_5_dresses)
+frequency_5_dresses <- colSums(dtm.new_5_dresses)
+frequency_5_dresses <- sort(frequency_5_dresses, decreasing=TRUE) 
+doc_length_5_dresses <- rowSums(dtm.new_5_dresses)
+frequency_5_dresses[1:10] #Example of the output
+```
+
+```{r}
+words_5_dresses <- names(frequency_5_dresses)# get back the word
+wordcloud(words_5_dresses[1:100], frequency_5_dresses[1:100], rot.per=0.15, random.order = FALSE, scale=c(4,0.5),
+random.color = FALSE, colors=brewer.pal(8,"Dark2"))
+```
+
+```{r}
+# create a frequency table
+dtm.new_4_dresses <- as.matrix(dtmdocs_4_dresses)
+frequency_4_dresses <- colSums(dtm.new_4_dresses)
+frequency_4_dresses <- sort(frequency_4_dresses, decreasing=TRUE) 
+doc_length_4_dresses <- rowSums(dtm.new_4_dresses)
+frequency_4_dresses[1:10] #Example of the output
+```
+
+```{r}
+words_4_dresses <- names(frequency_4_dresses)# get back the word
+wordcloud(words_4_dresses[1:100], frequency_4_dresses[1:100], rot.per=0.15, random.order = FALSE, scale=c(4,0.5),
+random.color = FALSE, colors=brewer.pal(8,"Dark2"))
+```
+
+```{r}
+# create a frequency table
+dtm.new_3_dresses <- as.matrix(dtmdocs_3_dresses)
+frequency_3_dresses <- colSums(dtm.new_3_dresses)
+frequency_3_dresses <- sort(frequency_3_dresses, decreasing=TRUE) 
+doc_length_3_dresses <- rowSums(dtm.new_3_dresses)
+frequency_3_dresses[1:10] #Example of the output
+```
+
+```{r}
+words_3_dresses <- names(frequency_3_dresses)# get back the word
+wordcloud(words_3_dresses[1:100], frequency_3_dresses[1:100], rot.per=0.15, random.order = FALSE, scale=c(4,0.5),
+random.color = FALSE, colors=brewer.pal(8,"Dark2"))
+```
+
+```{r}
+# create a frequency table
+dtm.new_2_dresses <- as.matrix(dtmdocs_2_dresses)
+frequency_2_dresses <- colSums(dtm.new_2_dresses)
+frequency_2_dresses <- sort(frequency_2_dresses, decreasing=TRUE) 
+doc_length_2_dresses <- rowSums(dtm.new_2_dresses)
+frequency_2_dresses[1:10] #Example of the output
+```
+
+```{r}
+words_2_dresses <- names(frequency_2_dresses)# get back the word
+wordcloud(words_2_dresses[1:100], frequency_2_dresses[1:100], rot.per=0.15, random.order = FALSE, scale=c(4,0.5),
+random.color = FALSE, colors=brewer.pal(8,"Dark2"))
+```
+
+```{r}
+# create a frequency table
+dtm.new_1_dresses <- as.matrix(dtmdocs_1_dresses)
+frequency_1_dresses <- colSums(dtm.new_1_dresses)
+frequency_1_dresses <- sort(frequency_1_dresses, decreasing=TRUE) 
+doc_length_1_dresses <- rowSums(dtm.new_1_dresses)
+frequency_1_dresses[1:10] #Example of the output
+```
+
+```{r}
+words_1_dresses <- names(frequency_1_dresses)# get back the word
+wordcloud(words_1_dresses[1:100], frequency_1_dresses[1:100], rot.per=0.15, random.order = FALSE, scale=c(4,0.5),
+random.color = FALSE, colors=brewer.pal(8,"Dark2"))
+```
+
+```{r}
+# determin number of topics
+iter_5_dresses <- 2000 
+coherence_5_dresses <- c()
+
+for (i in (5:20)){
+  ldaOut5_dresses <-LDA(dtmdocs_5_dresses,i, method="Gibbs",
+               control=list(iter=iter_5_dresses,seed=1000))
+  phi5_dresses <- posterior(ldaOut5_dresses)$terms %>% as.matrix
+  theta5_dresses <- posterior(ldaOut5_dresses)$topics %>% as.matrix 
+  coherence_one_5_dresses <- mean(textmineR::CalcProbCoherence(phi = phi5_dresses,dtm = dtm.new_5_dresses))    
+  coherence5_dresses<-append(coherence_5_dresses,coherence_one_5_dresses)
+}
+
+k_5_dresses <- c(5:20)[which.max(coherence5_dresses)] 
+print(k_5_dresses)
+```
+
+```{r}
+# determin number of topics
+iter_4_dresses <- 2000 
+coherence_4_dresses <- c()
+
+for (i in (5:20)){
+  ldaOut4_dresses <-LDA(dtmdocs_4_dresses,i, method="Gibbs",
+               control=list(iter=iter_4_dresses,seed=1000))
+  phi4_dresses <- posterior(ldaOut4_dresses)$terms %>% as.matrix
+  theta4_dresses <- posterior(ldaOut4_dresses)$topics %>% as.matrix 
+  coherence_one_4_dresses <- mean(textmineR::CalcProbCoherence(phi = phi4_dresses,dtm = dtm.new_4_dresses))    
+  coherence4_dresses<-append(coherence_4_dresses,coherence_one_4_dresses)
+}
+
+k_4_dresses <- c(5:20)[which.max(coherence4_dresses)] 
+print(k_4_dresses)
+```
+
+```{r}
+# determin number of topics
+iter_3_dresses <- 2000 
+coherence_3_dresses <- c()
+
+for (i in (5:20)){
+  ldaOut3_dresses <-LDA(dtmdocs_3_dresses,i, method="Gibbs",
+               control=list(iter=iter_3_dresses,seed=1000))
+  phi3_dresses <- posterior(ldaOut3_dresses)$terms %>% as.matrix
+  theta3_dresses <- posterior(ldaOut3_dresses)$topics %>% as.matrix 
+  coherence_one_3_dresses <- mean(textmineR::CalcProbCoherence(phi = phi3_dresses,dtm = dtm.new_3_dresses))    
+  coherence3_dresses<-append(coherence_3_dresses,coherence_one_3_dresses)
+}
+
+k_3_dresses <- c(5:20)[which.max(coherence3_dresses)] 
+print(k_3_dresses)
+```
+
+```{r}
+# determin number of topics
+iter_2_dresses <- 2000 
+coherence_2_dresses <- c()
+
+for (i in (5:20)){
+  ldaOut2_dresses <-LDA(dtmdocs_2_dresses,i, method="Gibbs",
+               control=list(iter=iter_2_dresses,seed=1000))
+  phi2_dresses <- posterior(ldaOut2_dresses)$terms %>% as.matrix
+  theta2_dresses <- posterior(ldaOut2_dresses)$topics %>% as.matrix 
+  coherence_one_2_dresses <- mean(textmineR::CalcProbCoherence(phi = phi2_dresses,dtm = dtm.new_2_dresses))    
+  coherence2_dresses<-append(coherence_2_dresses,coherence_one_2_dresses)
+}
+
+k_2_dresses <- c(5:20)[which.max(coherence2_dresses)] 
+print(k_2_dresses)
+```
+
+```{r}
+# determin number of topics
+iter_1_dresses <- 2000 
+coherence_1_dresses <- c()
+
+for (i in (5:20)){
+  ldaOut1_dresses <-LDA(dtmdocs_1_dresses,i, method="Gibbs",
+               control=list(iter=iter_1_dresses,seed=1000))
+  phi1_dresses <- posterior(ldaOut1_dresses)$terms %>% as.matrix
+  theta1_dresses <- posterior(ldaOut1_dresses)$topics %>% as.matrix 
+  coherence_one_1_dresses <- mean(textmineR::CalcProbCoherence(phi = phi1_dresses,dtm = dtm.new_1_dresses))    
+  coherence1_dresses<-append(coherence_1_dresses,coherence_one_1_dresses)
+}
+
+k_1_dresses <- c(5:20)[which.max(coherence1_dresses)] 
+print(k_1_dresses)
+```
+
+```{r}
+# topic Modelling: Latent Dirichlet Allocation
+ldaOut5_dresses <-LDA(dtmdocs_5_dresses,k_5_dresses, method="Gibbs", control=list(iter=iter_5_dresses,seed=1000))
+phi5_dresses <- posterior(ldaOut5_dresses)$terms %>% as.matrix
+#matrix, with each row containing the distribution over terms for a topic,
+theta5_dresses <- posterior(ldaOut5_dresses)$topics %>% as.matrix
+#matrix, with each row containing the probability distribution over topics for a document,
+```
+
+```{r}
+# Which highest alpha 'term' is part of which topics
+ldaOut.terms_5_dresses <- as.matrix(terms(ldaOut5_dresses, 10))
+```
+
+```{r}
+# Which 'topic' is the review in (highest probability)
+ldaOut.topics_5_dresses <- data.frame(topics(ldaOut5_dresses))
+ldaOut.topics_5_dresses$index <- as.numeric(row.names(ldaOut.topics_5_dresses)) 
+five_stars_dresses$index <- as.numeric(row.names(five_stars_dresses))
+datawithtopic5_dresses <- merge(five_stars_dresses, ldaOut.topics_5_dresses, by='index',all.x=TRUE)
+datawithtopic5_dresses <- datawithtopic5_dresses[order(datawithtopic5_dresses$index), ]
+```
+
+```{r}
+datawithtopic5_dresses[0:10,]
+```
+
+```{r}
+# topic Modelling: Latent Dirichlet Allocation
+ldaOut4_dresses <-LDA(dtmdocs_4_dresses,k_4_dresses, method="Gibbs", control=list(iter=iter_4_dresses,seed=1000))
+phi4_dresses <- posterior(ldaOut4_dresses)$terms %>% as.matrix
+#matrix, with each row containing the distribution over terms for a topic,
+theta4_dresses <- posterior(ldaOut4_dresses)$topics %>% as.matrix
+#matrix, with each row containing the probability distribution over topics for a document,
+```
+
+```{r}
+# Which highest alpha 'term' is part of which topics
+ldaOut.terms_4_dresses <- as.matrix(terms(ldaOut4_dresses, 10))
+```
+
+```{r}
+# Which 'topic' is the review in (highest probability)
+ldaOut.topics_4_dresses <- data.frame(topics(ldaOut4_dresses))
+ldaOut.topics_4_dresses$index <- as.numeric(row.names(ldaOut.topics_4_dresses)) 
+four_stars_dresses$index <- as.numeric(row.names(four_stars_dresses))
+datawithtopic4_dresses <- merge(four_stars_dresses, ldaOut.topics_4_dresses, by='index',all.x=TRUE)
+datawithtopic4_dresses <- datawithtopic4_dresses[order(datawithtopic4_dresses$index), ]
+```
+
+```{r}
+datawithtopic4_dresses[0:10,]
+```
+
+```{r}
+# topic Modelling: Latent Dirichlet Allocation
+ldaOut3_dresses <-LDA(dtmdocs_3_dresses,k_3_dresses, method="Gibbs", control=list(iter=iter_3_dresses,seed=1000))
+phi3_dresses <- posterior(ldaOut3_dresses)$terms %>% as.matrix
+#matrix, with each row containing the distribution over terms for a topic,
+theta3_dresses <- posterior(ldaOut3_dresses)$topics %>% as.matrix
+#matrix, with each row containing the probability distribution over topics for a document,
+```
+
+```{r}
+# Which highest alpha 'term' is part of which topics
+ldaOut.terms_3_dresses <- as.matrix(terms(ldaOut3_dresses, 10))
+```
+
+```{r}
+# Which 'topic' is the review in (highest probability)
+ldaOut.topics_3_dresses <- data.frame(topics(ldaOut3_dresses))
+ldaOut.topics_3_dresses$index <- as.numeric(row.names(ldaOut.topics_3_dresses)) 
+three_stars_dresses$index <- as.numeric(row.names(three_stars_dresses))
+datawithtopic3_dresses <- merge(three_stars_dresses, ldaOut.topics_3_dresses, by='index',all.x=TRUE)
+datawithtopic3_dresses <- datawithtopic3_dresses[order(datawithtopic3_dresses$index), ]
+```
+
+```{r}
+datawithtopic3_dresses[0:10,]
+```
+
+```{r}
+# topic Modelling: Latent Dirichlet Allocation
+ldaOut2_dresses <-LDA(dtmdocs_2_dresses,k_2_dresses, method="Gibbs", control=list(iter=iter_2_dresses,seed=1000))
+phi2_dresses <- posterior(ldaOut2_dresses)$terms %>% as.matrix
+#matrix, with each row containing the distribution over terms for a topic,
+theta2_dresses <- posterior(ldaOut2_dresses)$topics %>% as.matrix
+#matrix, with each row containing the probability distribution over topics for a document,
+```
+
+```{r}
+# Which highest alpha 'term' is part of which topics
+ldaOut.terms_2_dresses <- as.matrix(terms(ldaOut2_dresses, 10))
+```
+
+```{r}
+# Which 'topic' is the review in (highest probability)
+ldaOut.topics_2_dresses <- data.frame(topics(ldaOut2_dresses))
+ldaOut.topics_2_dresses$index <- as.numeric(row.names(ldaOut.topics_2_dresses)) 
+two_stars_dresses$index <- as.numeric(row.names(two_stars_dresses))
+datawithtopic2_dresses <- merge(two_stars_dresses, ldaOut.topics_2_dresses, by='index',all.x=TRUE)
+datawithtopic2_dresses <- datawithtopic2_dresses[order(datawithtopic2_dresses$index), ]
+```
+
+```{r}
+datawithtopic2_dresses[0:10,]
+```
+
+```{r}
+# topic Modelling: Latent Dirichlet Allocation
+ldaOut1_dresses <-LDA(dtmdocs_1_dresses,k_1_dresses, method="Gibbs", control=list(iter=iter_1_dresses,seed=1000))
+phi1_dresses <- posterior(ldaOut1_dresses)$terms %>% as.matrix
+#matrix, with each row containing the distribution over terms for a topic,
+theta1_dresses <- posterior(ldaOut1_dresses)$topics %>% as.matrix
+#matrix, with each row containing the probability distribution over topics for a document,
+```
+
+```{r}
+# Which highest alpha 'term' is part of which topics
+ldaOut.terms_1_dresses <- as.matrix(terms(ldaOut1_dresses, 10))
+```
+
+```{r}
+# Which 'topic' is the review in (highest probability)
+ldaOut.topics_1_dresses <- data.frame(topics(ldaOut1_dresses))
+ldaOut.topics_1_dresses$index <- as.numeric(row.names(ldaOut.topics_1_dresses)) 
+one_stars_dresses$index <- as.numeric(row.names(one_stars_dresses))
+datawithtopic1_dresses <- merge(one_stars_dresses, ldaOut.topics_1_dresses, by='index',all.x=TRUE)
+datawithtopic1_dresses <- datawithtopic1_dresses[order(datawithtopic1_dresses$index), ]
+```
+
+```{r}
+datawithtopic1_dresses[0:10,]
+```
+
